@@ -1,2 +1,2 @@
-include ':app'
+include ':parser'
 rootProject.name = "smartscanner-mrz-parser"
