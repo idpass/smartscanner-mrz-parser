@@ -30,6 +30,7 @@ import org.idpass.smartscanner.mrz.parser.innovatrics.records.MrtdTd2;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.MrvA;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.MrvB;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.French_ID;
+import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Iraq_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Senegal_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Slovak_ID_2_34;
 
@@ -58,6 +59,18 @@ public enum MrzFormat {
      * MRTD td1 format: A three line long, 30 characters per line format.
      */
     MRTD_TD1(3, 30, MrtdTd1.class),
+    /**
+     * IRAQ ID: A three line long, 30 characters per line format.
+     */
+    IRAQ_ID(3, 30, Iraq_ID.class){
+
+        public boolean isFormatOf(String[] mrzRows) {
+            if (!super.isFormatOf(mrzRows)) {
+                return false;
+            }
+            return mrzRows[0].startsWith("IDIRQ");
+        }
+    },
     /**
      * French 2 line/36 characters per line format, used with French ID cards.
      * Need to occur before the {@link #MRTD_TD2} enum constant because of the same values for row/column.
