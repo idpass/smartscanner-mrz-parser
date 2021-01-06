@@ -20,7 +20,20 @@ If you want to build this library from source, instructions to do so can be foun
 
 ## Usage
 
+Import the `MrzParser` class from the library. This provides methods for working with MRZ strings.
 
+```java
+import org.idpass.smartscanner.mrz.parser.innovatrics.MrzParser;
+```
+
+Call `MrzParser.parse()` to parse an MRZ string. Refer to the [API Reference](https://github.com/idpass/smartscanner-mrz-parser/wiki/API-Reference) for other available methods in the `MrzParser` class and the properties of the parsed record.
+
+```java
+String mrz = "I<UTOD231458907<<<<<<<<<<<<<<<\n" +
+             "7408122F1204159UTO<<<<<<<<<<<6\n" +
+             "ERIKSSON<<ANNA<MARIA<<<<<<<<<<";
+MrzRecord parsed = MrzParser.parse(mrz);
+```
 
 ## License
 
