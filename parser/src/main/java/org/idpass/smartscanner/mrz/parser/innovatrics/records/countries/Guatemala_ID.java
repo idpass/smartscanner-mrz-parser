@@ -62,7 +62,7 @@ public class Guatemala_ID extends MrzRecord {
         sex = p.parseSex(7, 1);
         expirationDate = p.parseDate(new MrzRange(8, 14, 1));
         validExpirationDate = p.checkDigit(14, 1, new MrzRange(8, 14, 1), "expiration date") && expirationDate.isDateValid();
-        nationality = p.parseString(new MrzRange(15, 18, 1));
+        nationality = p.parseString(new MrzRange(2, 5, 0));
         optional2 = p.parseString(new MrzRange(18, 29, 1));
         validComposite = true;
         log.debug(p.rawValue(new MrzRange(5, 30, 0), new MrzRange(0, 7, 1), new MrzRange(8, 15, 1), new MrzRange(18, 29, 1)));
