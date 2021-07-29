@@ -58,10 +58,6 @@ public enum MrzFormat {
         }
     },
     /**
-     * MRTD td1 format: A three line long, 30 characters per line format.
-     */
-    MRTD_TD1(3, 30, MrtdTd1.class),
-    /**
      * El Salvador ID: A three line long, 30 characters per line format.
      */
     SLV_ID(3, 30, El_Salvador_ID.class){
@@ -150,7 +146,11 @@ public enum MrzFormat {
     /**
      * Unknown 2 line/34 characters per line format, used with old Slovak ID cards.
      */
-    SLOVAK_ID_234(2, 34, Slovak_ID_2_34.class);
+    SLOVAK_ID_234(2, 34, Slovak_ID_2_34.class),
+    /**
+     * MRTD td1 format: A three line long, 30 characters per line format.
+     */
+    MRTD_TD1(3, 30, MrtdTd1.class);
     public final int rows;
     public final int columns;
     private final Class<? extends MrzRecord> recordClass;

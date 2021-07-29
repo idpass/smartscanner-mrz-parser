@@ -34,7 +34,7 @@ public class Guatemala_ID extends MrzRecord {
     private static final long serialVersionUID = 1L;
 
     public Guatemala_ID() {
-        super(MrzFormat.SLV_ID);
+        super(MrzFormat.GTM_ID);
     }
     /**
      * Optional data at the discretion
@@ -54,8 +54,8 @@ public class Guatemala_ID extends MrzRecord {
         super.fromMrz(mrz);
         final MrzParser p = new MrzParser(mrz);
         // TODO add proper validation checkDigit
-        documentNumber = p.parseString(new MrzRange(5, 16, 0));
-        validDocumentNumber = p.checkDigit(16, 0, new MrzRange(5, 16, 0), "document number");
+        documentNumber = p.parseString(new MrzRange(5, 14, 0));
+        validDocumentNumber = p.checkDigit(14, 0, new MrzRange(5, 14, 0), "document number");
         optional = p.parseString(new MrzRange(15, 30, 0));
         dateOfBirth = p.parseDate(new MrzRange(0, 6, 1));
         validDateOfBirth = p.checkDigit(6, 1, new MrzRange(0, 6, 1), "date of birth") && dateOfBirth.isDateValid();
@@ -64,14 +64,14 @@ public class Guatemala_ID extends MrzRecord {
         validExpirationDate = p.checkDigit(14, 1, new MrzRange(8, 14, 1), "expiration date") && expirationDate.isDateValid();
         nationality = p.parseString(new MrzRange(15, 18, 1));
         optional2 = p.parseString(new MrzRange(18, 29, 1));
-        validComposite = p.checkDigit(29, 1, p.rawValue(new MrzRange(5, 30, 0), new MrzRange(0, 7, 1), new MrzRange(8, 15, 1), new MrzRange(18, 29, 1)), "mrz");
+        validComposite = true;
         log.debug(p.rawValue(new MrzRange(5, 30, 0), new MrzRange(0, 7, 1), new MrzRange(8, 15, 1), new MrzRange(18, 29, 1)));
         setName(p.parseName(new MrzRange(0, 30, 2)));
     }
 
     @Override
     public String toString() {
-        return "SLV-ID{" + super.toString() + ", optional=" + optional + ", optional2=" + optional2 + '}';
+        return "GTM-ID{" + super.toString() + ", optional=" + optional + ", optional2=" + optional2 + '}';
     }
 
     @Override
