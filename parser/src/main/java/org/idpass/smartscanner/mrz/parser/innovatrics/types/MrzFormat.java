@@ -1,17 +1,17 @@
 /*
  * Java parser for the MRZ records, as specified by the ICAO organization.
  * Copyright (C) 2011 Innovatrics s.r.o.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -29,7 +29,9 @@ import org.idpass.smartscanner.mrz.parser.innovatrics.records.MrtdTd1;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.MrtdTd2;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.MrvA;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.MrvB;
+import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Burkina_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Cameroon_ID;
+import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Dominican_Republic_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.El_Salvador_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.French_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Guatemala_ID;
@@ -44,6 +46,7 @@ import java.util.Arrays;
  * @author Martin Vysny, Pierrick Martin
  */
 public enum MrzFormat {
+
     /**
      * Senegal 3 line/30 characters per line format.
      * Need to occur before the {@link #MRTD_TD1} enum constant because of the same values for row/column.
@@ -58,6 +61,19 @@ public enum MrzFormat {
             return mrzRows[0].startsWith("I<SEN");
         }
     },
+
+    /**
+     * Bukina ID: A three line long, 30 characters per line format.
+     */
+    BURKINA_ID(3, 30, Burkina_ID.class) {
+
+        public boolean isFormatOf(String[] mrzRows) {
+            if (!super.isFormatOf(mrzRows)) {
+                return false;
+            }
+            return mrzRows[0].startsWith("I<BFA");
+        }
+    },
     /**
      * Cameroon ID: A three line long, 30 characters per line format.
      */
@@ -68,6 +84,18 @@ public enum MrzFormat {
                 return false;
             }
             return mrzRows[0].startsWith("IDCMR");
+        }
+    },
+    /**
+     * Cameroon ID: A three line long, 30 characters per line format.
+     */
+    DOMINICAN_REPUBLIC_ID(3, 30, Dominican_Republic_ID.class) {
+
+        public boolean isFormatOf(String[] mrzRows) {
+            if (!super.isFormatOf(mrzRows)) {
+                return false;
+            }
+            return mrzRows[0].startsWith("IDDOM");
         }
     },
     /**
@@ -132,7 +160,7 @@ public enum MrzFormat {
                 return false;
             }
             return mrzRows[0].startsWith("V");
-        } 
+        }
     },
     /**
      * MRTD td2 format: A two line long, 36 characters per line format.

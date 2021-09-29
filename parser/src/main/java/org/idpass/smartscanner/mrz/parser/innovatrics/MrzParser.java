@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * Parses the MRZ records.
  * <p/>
- * All parse methods throws {@link org.idpass.smartscanner.mrz.parser.innovatrics.MrzParseException} unless stated otherwise.
+ * All parse methods throws {@link MrzParseException} unless stated otherwise.
  * @author Martin Vysny
  */
 public class MrzParser {
@@ -70,20 +70,31 @@ public class MrzParser {
     public String[] parseName(MrzRange range) {
         checkValidCharacters(range);
         String str = rawValue(range);
-        while (str.endsWith("<")) {
+        // Workaround: MLKIT sometimes reads *character `<` as either `S, C, E or K`
+        // To make sure that it is not part of the name string checks begin with `<<(*)`
+        // assuming that a person's name cannot have multiple different surnames.
+        // Filed this issue in MLKit github: https://github.com/googlesamples/mlkit/issues/354
+        while (str.endsWith("<") ||
+                str.endsWith("<<S") || // Sometimes MLKit perceives `<` as `S`
+                str.endsWith("<<E") || // Sometimes MLKit perceives `<` as `E`
+                str.endsWith("<<C") || // Sometimes MLKit perceives `<` as `C`
+                str.endsWith("<<K") || // Sometimes MLKit  perceives `<` as `K`
+                str.endsWith("<<KK") ) // Sometimes MLKit  perceives `<<` as `KK`
+        {
             str = str.substring(0, str.length() - 1);
         }
+
         final String[] names = str.split("<<");
         String surname;
         String givenNames = "";
         surname = parseString(new MrzRange(range.column, range.column + names[0].length(), range.row));
-        if(names.length==1){
-            givenNames = parseString(new MrzRange(range.column, range.column + names[0].length(), range.row));
+        if (names.length == 1){
+            givenNames = parseNameString(new MrzRange(range.column, range.column + names[0].length(), range.row));
             surname = "";
         }
-        else if(names.length>1){
-            surname = parseString(new MrzRange(range.column, range.column + names[0].length(), range.row));
-            givenNames = parseString(new MrzRange(range.column + names[0].length() + 2, range.column + str.length(), range.row));
+        else if (names.length > 1){
+            surname = parseNameString(new MrzRange(range.column, range.column + names[0].length(), range.row));
+            givenNames = parseNameString(new MrzRange(range.column + names[0].length() + 2, range.column + str.length(), range.row));
         }
         return new String[]{surname, givenNames};
     }
@@ -126,12 +137,53 @@ public class MrzParser {
         while (str.endsWith("<")) {
             str = str.substring(0, str.length() - 1);
         }
-        return str.replace("" + FILLER + FILLER, ", ").replace(FILLER, ' ');
+        return str.replace("<", "").replace("" + FILLER + FILLER, ", ").replace(FILLER, ' ');
     }
 
     /**
-     * Parses a document number string in given range especially used in SLV IDs,
-     * &lt;&lt; are replaced with "-", &lt; is replaced by space.
+     * Parses a string in given range. and known characters will be replaced to numbers
+     *  &lt;&lt; are replaced with ", ", &lt; is replaced by space.
+     * @param range the range
+     * @return parsed string.
+     */
+    public String parseNumberString(MrzRange range) {
+        checkValidCharacters(range);
+        String str = rawValue(range)
+                .replace("O", "0")
+                .replace("I", "1")
+                .replace("B", "8")
+                .replace("S", "5")
+                .replace("Z", "2");
+        while (str.endsWith("<")) {
+            str = str.substring(0, str.length() - 1);
+        }
+        return str.replace("<", "").replace("" + FILLER + FILLER, ", ").replace(FILLER, ' ');
+    }
+
+    /**
+     * Parses a string in given range for MRZ names. &lt;&lt; are replaced with  "",
+     * &lt; is replaced by space.
+     * @param range the range
+     * @return parsed string.
+     */
+    public String parseNameString(MrzRange range) {
+        checkValidCharacters(range);
+        String str = rawValue(range);
+        while (str.endsWith("<") ||
+                str.endsWith("<<S") || // Sometimes MLKit perceives `<` as `S`
+                str.endsWith("<<E") || // Sometimes MLKit perceives `<` as `E`
+                str.endsWith("<<C") || // Sometimes MLKit perceives `<` as `C`
+                str.endsWith("<<K") || // Sometimes MLKit perceives `<` as `K`
+                str.endsWith("<<KK") ) // Sometimes MLKit perceives `<<` as `KK`
+        {
+            str = str.substring(0, str.length() - 1);
+        }
+        return str.replace("" + FILLER + FILLER, "").replace(FILLER, ' ');
+    }
+
+    /**
+     * Parses a document number string in given range, &lt;&lt; are replaced with "-",
+     * &lt; is replaced by space.
      *
      * @param range the range
      * @return parsed string.
@@ -161,6 +213,18 @@ public class MrzParser {
      * Verifies the check digit.
      * @param col the 0-based column of the check digit.
      * @param row the 0-based column of the check digit.
+     * @param strRange the range for which the check digit is computed.
+     * @param fieldName (optional) field name. Used only when validity check fails.
+     * @return true if check digit is valid, false if not
+     */
+    public boolean checkDigitWithoutFiller(int col, int row, MrzRange strRange, String fieldName) {
+        return checkDigit(col, row, rawValue(strRange).replace("<", ""), fieldName);
+    }
+
+    /**
+     * Verifies the check digit.
+     * @param col the 0-based column of the check digit.
+     * @param row the 0-based column of the check digit.
      * @param str the raw MRZ substring.
      * @param fieldName (optional) field name. Used only when validity check fails.
      * @return true if check digit is valid, false if not
@@ -177,6 +241,7 @@ public class MrzParser {
         if (checkDigit == FILLER) {
             checkDigit = '0';
         }
+
         if (digit != checkDigit) {
             invalidCheckdigit = new MrzRange(col, col + 1, row);
             System.out.println("Check digit verification failed for " + fieldName + ": expected " + digit + " but got " + checkDigit);
@@ -306,7 +371,7 @@ public class MrzParser {
      * @return MrtdTd1 record class.
      */
     public static MrtdTd1 parseToMrtdTd1(String mrz) {
-        final MrtdTd1 result = (MrtdTd1)MrzFormat.get(mrz).newRecord();
+        final MrtdTd1 result = (MrtdTd1) MrzFormat.get(mrz).newRecord();
         result.fromMrz(mrz);
         return result;
     }
