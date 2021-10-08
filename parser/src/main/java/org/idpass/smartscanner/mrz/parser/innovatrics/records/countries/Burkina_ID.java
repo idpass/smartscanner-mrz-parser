@@ -51,7 +51,7 @@ public class Burkina_ID extends MrzRecord {
         org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MrzParser.class);
         super.fromMrz(mrz);
         final MrzParser p = new MrzParser(mrz);
-        documentNumber = fomatDocumentNumber(p.parseString(new MrzRange(5, 14, 0)));
+        documentNumber = p.parseString(new MrzRange(5, 14, 0));
         validDocumentNumber = p.checkDigit(14, 0, new MrzRange(5, 14, 0), "document number");
         optional = p.parseString(new MrzRange(15, 30, 0));
         dateOfBirth = p.parseDate(new MrzRange(0, 6, 1));
@@ -64,14 +64,6 @@ public class Burkina_ID extends MrzRecord {
         validComposite = p.checkDigit(29, 1, p.rawValue(new MrzRange(5, 30, 0), new MrzRange(0, 7, 1), new MrzRange(8, 15, 1), new MrzRange(18, 29, 1)), "mrz");
         log.debug(p.rawValue(new MrzRange(5, 30, 0), new MrzRange(0, 7, 1), new MrzRange(8, 15, 1), new MrzRange(18, 29, 1)));
         setName(p.parseName(new MrzRange(0, 30, 2)));
-    }
-
-    private String fomatDocumentNumber(String docNum) {
-        StringBuilder formattedDocNUm = new StringBuilder(docNum);
-        if (docNum.charAt(1) == '0') {
-            formattedDocNUm.setCharAt(1, ' ');
-        }
-        return formattedDocNUm.toString().replace(" ", "" );
     }
 
     @Override
