@@ -56,8 +56,8 @@ public class French_ID extends MrzRecord {
         final MrzParser p = new MrzParser(mrz);
         //Special because surname and firstname not on the same line
         String[] name = new String[]{"", ""};
-        name[0] = p.parseString(new MrzRange(5, 30, 0));
-        name[1] = p.parseString(new MrzRange(13, 27, 1));
+        name[0] = p.parseNameStringWithSeparators(new MrzRange(5, 30, 0));
+        name[1] = p.parseNameStringWithSeparators(new MrzRange(13, 27, 1));
         setName(name);
         nationality = p.parseString(new MrzRange(2, 5, 0));
         optional = p.parseString(new MrzRange(30, 36, 0));

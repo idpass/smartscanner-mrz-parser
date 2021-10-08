@@ -137,7 +137,7 @@ public class MrzParser {
         while (str.endsWith("<")) {
             str = str.substring(0, str.length() - 1);
         }
-        return str.replace("<", "").replace("" + FILLER + FILLER, ", ").replace(FILLER, ' ');
+        return str.replace("" + FILLER + FILLER, ", ").replace(FILLER, ' ');
     }
 
     /**
@@ -179,6 +179,31 @@ public class MrzParser {
             str = str.substring(0, str.length() - 1);
         }
         return str.replace("" + FILLER + FILLER, "").replace(FILLER, ' ');
+    }
+
+    /**
+     * Parses a string in given range for MRZ names. &lt;&lt; are replaced with  "",
+     * &lt; is replaced by space.
+     * @param range the range
+     * @return parsed string.
+     */
+    public String parseNameStringWithSeparators(MrzRange range) {
+        checkValidCharacters(range);
+        String str = rawValue(range);
+        while (str.endsWith("<") ||
+                str.endsWith("<<S") || // Sometimes MLKit perceives `<` as `S`
+                str.endsWith("<<E") || // Sometimes MLKit perceives `<` as `E`
+                str.endsWith("<<C") || // Sometimes MLKit perceives `<` as `C`
+                str.endsWith("<<CC") || // Sometimes MLKit perceives `<` as `C`
+                str.endsWith("<<K") || // Sometimes MLKit perceives `<` as `K`
+                str.endsWith("<<KK") || // Sometimes MLKit perceives `<<` as `KK`
+                str.endsWith("<<KKK") || // Sometimes MLKit perceives `<<` as `KKK`
+                str.endsWith("<<KKKK") || // Sometimes MLKit perceives `<<` as `KKKK`
+                str.endsWith("<<KKKKK") ) // Sometimes MLKit perceives `<<` as `KKKKK`
+        {
+            str = str.substring(0, str.length() - 1);
+        }
+        return str.replace("" + FILLER + FILLER, ", ").replace(FILLER, ' ');
     }
 
     /**
