@@ -37,7 +37,6 @@ import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.French_I
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Guatemala_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Iraq_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Senegal_ID;
-import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Slovak_ID_2_34;
 
 import java.util.Arrays;
 
@@ -184,10 +183,6 @@ public enum MrzFormat {
      * MRP Passport format: A two line long, 44 characters per line format.
      */
     PASSPORT(2, 44, MRP.class),
-    /**
-     * Unknown 2 line/34 characters per line format, used with old Slovak ID cards.
-     */
-    SLOVAK_ID_234(2, 34, Slovak_ID_2_34.class),
     /**
      * MRTD td1 format: A three line long, 30 characters per line format.
      */
