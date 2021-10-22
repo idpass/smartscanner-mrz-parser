@@ -134,6 +134,10 @@ public enum MrzFormat {
         }
     },
     /**
+     * MRTD td1 format: A three line long, 30 characters per line format.
+     */
+    MRTD_TD1(3, 30, MrtdTd1.class),
+    /**
      * French 2 line/36 characters per line format, used with French ID cards.
      * Need to occur before the {@link #MRTD_TD2} enum constant because of the same values for row/column.
      * See below for the "if" test.
@@ -182,11 +186,8 @@ public enum MrzFormat {
     /**
      * MRP Passport format: A two line long, 44 characters per line format.
      */
-    PASSPORT(2, 44, MRP.class),
-    /**
-     * MRTD td1 format: A three line long, 30 characters per line format.
-     */
-    MRTD_TD1(3, 30, MrtdTd1.class);
+    PASSPORT(2, 44, MRP.class);
+
     public final int rows;
     public final int columns;
     private final Class<? extends MrzRecord> recordClass;
