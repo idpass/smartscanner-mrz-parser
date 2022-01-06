@@ -36,6 +36,7 @@ import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.El_Salva
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.French_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Guatemala_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Iraq_ID;
+import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Pakistan_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Senegal_ID;
 
 import java.util.Arrays;
@@ -71,6 +72,18 @@ public enum MrzFormat {
                 return false;
             }
             return mrzRows[0].startsWith("I<BFA");
+        }
+    },
+    /**
+     * Pakistan ID: A three line long, 30 characters per line format.
+     */
+    PAKISTAN_ID(3, 30, Pakistan_ID.class){
+
+        public boolean isFormatOf(String[] mrzRows) {
+            if (!super.isFormatOf(mrzRows)) {
+                return false;
+            }
+            return mrzRows[0].startsWith("I<PAK");
         }
     },
     /**
