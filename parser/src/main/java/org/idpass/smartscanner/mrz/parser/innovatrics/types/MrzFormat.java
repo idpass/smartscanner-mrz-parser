@@ -35,6 +35,7 @@ import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Dominica
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.El_Salvador_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.French_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Guatemala_ID;
+import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Haiti_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Iraq_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Pakistan_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Senegal_ID;
@@ -84,6 +85,18 @@ public enum MrzFormat {
                 return false;
             }
             return mrzRows[0].startsWith("I<PAK");
+        }
+    },
+    /**
+     * Haiti ID: A three line long, 30 characters per line format.
+     */
+    HAITI_ID(3, 30, Haiti_ID.class){
+
+        public boolean isFormatOf(String[] mrzRows) {
+            if (!super.isFormatOf(mrzRows)) {
+                return false;
+            }
+            return mrzRows[0].startsWith("I<HTI");
         }
     },
     /**
