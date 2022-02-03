@@ -53,8 +53,8 @@ public class Pakistan_ID extends MrzRecord {
         Logger log = LoggerFactory.getLogger(MrzParser.class);
         super.fromMrz(mrz);
         final MrzParser p = new MrzParser(mrz);
-        documentNumber = p.parseString(new MrzRange(5, 13, 0));
-        validDocumentNumber = p.checkDigit(13, 0, new MrzRange(5, 13, 0), "document number");
+        documentNumber = p.parseString(new MrzRange(5, 14, 0));
+        validDocumentNumber = p.checkDigit(14, 0, new MrzRange(5, 14, 0), "document number");
         optional = p.parseString(new MrzRange(14, 30, 0));
         dateOfBirth = p.parseDate(new MrzRange(0, 6, 1));
         validDateOfBirth = p.checkDigit(6, 1, new MrzRange(0, 6, 1), "date of birth") && dateOfBirth.isDateValid();
@@ -80,7 +80,7 @@ public class Pakistan_ID extends MrzRecord {
         sb.append(code1);
         sb.append(code2);
         sb.append(MrzParser.toMrz(issuingCountry, 3));
-        final String dno = MrzParser.toMrz(documentNumber, 9) + MrzParser.computeCheckDigitChar(MrzParser.toMrz(documentNumber, 9)) + MrzParser.toMrz(optional, 14);
+        final String dno = MrzParser.toMrz(documentNumber, 10) + MrzParser.toMrz(optional, 15);
         sb.append(dno);
         sb.append('\n');
         // second line
