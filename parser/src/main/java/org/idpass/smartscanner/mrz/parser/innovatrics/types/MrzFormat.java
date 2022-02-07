@@ -35,9 +35,10 @@ import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Dominica
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.El_Salvador_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.French_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Guatemala_ID;
+import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Haiti_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Iraq_ID;
+import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Pakistan_ID;
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Senegal_ID;
-import org.idpass.smartscanner.mrz.parser.innovatrics.records.countries.Slovak_ID_2_34;
 
 import java.util.Arrays;
 
@@ -72,6 +73,30 @@ public enum MrzFormat {
                 return false;
             }
             return mrzRows[0].startsWith("I<BFA");
+        }
+    },
+    /**
+     * Pakistan ID: A three line long, 30 characters per line format.
+     */
+    PAKISTAN_ID(3, 30, Pakistan_ID.class){
+
+        public boolean isFormatOf(String[] mrzRows) {
+            if (!super.isFormatOf(mrzRows)) {
+                return false;
+            }
+            return mrzRows[0].startsWith("I<PAK");
+        }
+    },
+    /**
+     * Haiti ID: A three line long, 30 characters per line format.
+     */
+    HAITI_ID(3, 30, Haiti_ID.class){
+
+        public boolean isFormatOf(String[] mrzRows) {
+            if (!super.isFormatOf(mrzRows)) {
+                return false;
+            }
+            return mrzRows[0].startsWith("I<HTI");
         }
     },
     /**
@@ -135,6 +160,10 @@ public enum MrzFormat {
         }
     },
     /**
+     * MRTD td1 format: A three line long, 30 characters per line format.
+     */
+    MRTD_TD1(3, 30, MrtdTd1.class),
+    /**
      * French 2 line/36 characters per line format, used with French ID cards.
      * Need to occur before the {@link #MRTD_TD2} enum constant because of the same values for row/column.
      * See below for the "if" test.
@@ -183,15 +212,8 @@ public enum MrzFormat {
     /**
      * MRP Passport format: A two line long, 44 characters per line format.
      */
-    PASSPORT(2, 44, MRP.class),
-    /**
-     * Unknown 2 line/34 characters per line format, used with old Slovak ID cards.
-     */
-    SLOVAK_ID_234(2, 34, Slovak_ID_2_34.class),
-    /**
-     * MRTD td1 format: A three line long, 30 characters per line format.
-     */
-    MRTD_TD1(3, 30, MrtdTd1.class);
+    PASSPORT(2, 44, MRP.class);
+
     public final int rows;
     public final int columns;
     private final Class<? extends MrzRecord> recordClass;
