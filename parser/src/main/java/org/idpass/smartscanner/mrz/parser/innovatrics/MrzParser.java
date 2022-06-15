@@ -74,14 +74,21 @@ public class MrzParser {
         // To make sure that it is not part of the name string checks begin with `<<(*)`
         // assuming that a person's name cannot have multiple different surnames.
         // Filed this issue in MLKit github: https://github.com/googlesamples/mlkit/issues/354
+        int stripChar;
         while (str.endsWith("<") ||
                 str.endsWith("<<S") || // Sometimes MLKit perceives `<` as `S`
                 str.endsWith("<<E") || // Sometimes MLKit perceives `<` as `E`
                 str.endsWith("<<C") || // Sometimes MLKit perceives `<` as `C`
-                str.endsWith("<<K") || // Sometimes MLKit  perceives `<` as `K`
-                str.endsWith("<<KK") ) // Sometimes MLKit  perceives `<<` as `KK`
+                str.endsWith("<<K") ) // Sometimes MLKit  perceives `<` as `K`
         {
-            str = str.substring(0, str.length() - 1);
+            if (str.endsWith("<<KK")) {
+                stripChar = 2;
+            } else if (str.endsWith("<<KKK")) {
+                stripChar = 3;
+            } else {
+                stripChar = 1;
+            }
+            str = str.substring(0, str.length() - stripChar);
         }
 
         final String[] names = str.split("<<");
