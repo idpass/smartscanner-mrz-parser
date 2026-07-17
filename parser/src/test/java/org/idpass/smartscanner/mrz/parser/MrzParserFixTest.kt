@@ -42,9 +42,20 @@ class MrzParserFixTest {
         "GARCIA<<JUAN"
     )
 
+    // TD3 passport (2 x 44): shows rawMrz round-trips beyond TD1 ID cards.
+    private val passportRaw = listOf(
+        "P<UTOERIKSSON<<ANNA<MARIA",
+        "L898902C36UTO7408122F1204159ZE184226B"
+    ).joinToString("\n") { it.padEnd(44, '<') }
+
     @Test
     fun `rawMrz preserves the exact parsed string`() {
         assertEquals(domRaw, MrzParser.parse(domRaw).rawMrz)
+    }
+
+    @Test
+    fun `rawMrz preserves the exact parsed string for a TD3 passport`() {
+        assertEquals(passportRaw, MrzParser.parse(passportRaw).rawMrz)
     }
 
     @Test
