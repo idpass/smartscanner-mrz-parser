@@ -62,7 +62,7 @@ public class Dominican_Republic_ID extends MrzRecord {
         if (!documentNumber.matches("\\d{11}")) {
             final String line0 = p.rows[0].replaceAll("<+$", "");
             if (line0.length() >= 11) {
-                final String tail = line0.substring(line0.length() - 11);
+                final String tail = MrzParser.correctOcrDigits(line0.substring(line0.length() - 11));
                 if (tail.matches("\\d{11}")) {
                     documentNumber = tail;
                 }

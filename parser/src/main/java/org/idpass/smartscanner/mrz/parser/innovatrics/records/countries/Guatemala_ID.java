@@ -60,7 +60,7 @@ public class Guatemala_ID extends MrzRecord {
         // New GTM DPI encodes 4 extra document-number digits in the optional field (line 0, cols 15-18);
         // older cards leave that area as fillers. If those 4 chars are digits, the full document number
         // is the 9-digit field + those 4 (13 total); otherwise keep the 9-digit number.
-        final String gtmExtra = p.rawValue(new MrzRange(15, 19, 0));
+        final String gtmExtra = MrzParser.correctOcrDigits(p.rawValue(new MrzRange(15, 19, 0)));
         if (documentNumber.matches("\\d{9}") && gtmExtra.matches("\\d{4}")) {
             documentNumber = documentNumber + gtmExtra;
         }

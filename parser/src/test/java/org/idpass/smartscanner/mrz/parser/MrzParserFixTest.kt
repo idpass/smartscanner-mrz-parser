@@ -43,6 +43,20 @@ class MrzParserFixTest {
         "MATEO<<HEECHUL<ANN"
     )
 
+    // Adversarial: new DOM with OCR letter-for-digit confusions in the cédula tail (O read for 0).
+    private val domNewOcrRaw = td1(
+        "IDDOMCV0067804<71<OO1O9416O16",
+        "7605149M4205146DOM",
+        "VARGAS<PEREZ<<JOEL<ELIGIO"
+    )
+
+    // Adversarial: new GTM with an OCR 'O' in the 4 extension digits (O123 -> 0123).
+    private val gtmNewOcrRaw = td1(
+        "IDGTM1234567890O123",
+        "9401194M1404306GTM",
+        "GARCIA<<JUAN"
+    )
+
     // GTM DPI, new format: 4 extra document-number digits (0123) sit in the optional field.
     private val gtmNewRaw = td1(
         "IDGTM12345678900123",
@@ -91,6 +105,16 @@ class MrzParserFixTest {
     @Test
     fun `old DOM layout still reads the cedula from the standard field`() {
         assertEquals("00119462497", MrzParser.parse(domOldRaw2).documentNumber)
+    }
+
+    @Test
+    fun `new DOM tolerates OCR letter-for-digit confusions in the cedula`() {
+        assertEquals("00109416016", MrzParser.parse(domNewOcrRaw).documentNumber)
+    }
+
+    @Test
+    fun `GTM new format tolerates an OCR letter in the 4 extension digits`() {
+        assertEquals("1234567890123", MrzParser.parse(gtmNewOcrRaw).documentNumber)
     }
 
     @Test

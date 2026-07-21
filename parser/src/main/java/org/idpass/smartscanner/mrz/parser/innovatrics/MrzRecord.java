@@ -33,6 +33,7 @@ import java.io.Serializable;
  */
 public abstract class MrzRecord implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
     /**
      * The document code.
