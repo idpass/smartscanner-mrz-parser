@@ -28,6 +28,21 @@ class MrzParserFixTest {
         "PIMENTEL<DIAZ<<MAXIMO<DAVID"
     )
 
+    // New DOM layout (real card, VARGAS PEREZ): cols 5-13 hold an alphanumeric card number
+    // (CV0067804); the 11-digit cédula 00109416016 sits at the END of line 1.
+    private val domNewRaw = td1(
+        "IDDOMCV0067804<71<00109416016",
+        "7605149M4205146DOM",
+        "VARGAS<PEREZ<<JOEL<ELIGIO"
+    )
+
+    // Old DOM layout (real card, MATEO): cédula 00119462497 in the standard cols 5-16 field.
+    private val domOldRaw2 = td1(
+        "IDDOM001194624<975",
+        "9507111M2407119DOM",
+        "MATEO<<HEECHUL<ANN"
+    )
+
     // GTM DPI, new format: 4 extra document-number digits (0123) sit in the optional field.
     private val gtmNewRaw = td1(
         "IDGTM12345678900123",
@@ -64,6 +79,18 @@ class MrzParserFixTest {
         assertEquals("40222828713", record.documentNumber)
         // toMrz() is a lossy rebuild; for an overflow number it must NOT equal the raw scan.
         assertNotEquals(record.toMrz(), record.rawMrz)
+    }
+
+    @Test
+    fun `new DOM layout reads the cedula from the end of line 1`() {
+        val record = MrzParser.parse(domNewRaw)
+        assertEquals("00109416016", record.documentNumber)
+        assertEquals(domNewRaw, record.rawMrz)
+    }
+
+    @Test
+    fun `old DOM layout still reads the cedula from the standard field`() {
+        assertEquals("00119462497", MrzParser.parse(domOldRaw2).documentNumber)
     }
 
     @Test
