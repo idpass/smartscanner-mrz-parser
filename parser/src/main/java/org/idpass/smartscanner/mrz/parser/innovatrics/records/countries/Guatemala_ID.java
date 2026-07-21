@@ -57,6 +57,13 @@ public class Guatemala_ID extends MrzRecord {
         documentNumber = p.parseString(new MrzRange(5, 14, 0));
         validDocumentNumber = p.checkDigit(14, 0, new MrzRange(5, 14, 0), "document number");
         optional = p.parseString(new MrzRange(15, 30, 0));
+        // New GTM DPI encodes 4 extra document-number digits in the optional field (line 0, cols 15-18);
+        // older cards leave that area as fillers. If those 4 chars are digits, the full document number
+        // is the 9-digit field + those 4 (13 total); otherwise keep the 9-digit number.
+        final String gtmExtra = MrzParser.correctOcrDigits(p.rawValue(new MrzRange(15, 19, 0)));
+        if (documentNumber.matches("\\d{9}") && gtmExtra.matches("\\d{4}")) {
+            documentNumber = documentNumber + gtmExtra;
+        }
         dateOfBirth = p.parseDate(new MrzRange(0, 6, 1));
         validDateOfBirth = p.checkDigit(6, 1, new MrzRange(0, 6, 1), "date of birth") && dateOfBirth.isDateValid();
         sex = p.parseSex(7, 1);

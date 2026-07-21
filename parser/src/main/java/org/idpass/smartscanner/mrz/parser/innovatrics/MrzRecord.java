@@ -33,6 +33,7 @@ import java.io.Serializable;
  */
 public abstract class MrzRecord implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
     /**
      * The document code.
@@ -110,6 +111,14 @@ public abstract class MrzRecord implements Serializable {
     public boolean validExpirationDate = true;
     public boolean validComposite = true;
 
+    /**
+     * The exact MRZ string this record was parsed from (the cleaned scan), set in {@link #fromMrz(String)}.
+     * Prefer this over {@link #toMrz()} when the scanned value is needed verbatim: {@code toMrz()} is a
+     * lossy re-serialization that rebuilds line 1 with a fixed 9-char document-number field, truncating
+     * overflow numbers such as the 11-digit Dominican cédula.
+     */
+    public String rawMrz;
+
 
     protected MrzRecord(MrzFormat format) {
         this.format = format;
@@ -128,6 +137,7 @@ public abstract class MrzRecord implements Serializable {
      * @throws MrzParseException when a problem occurs.
      */
     public void fromMrz(String mrz) throws MrzParseException {
+        rawMrz = mrz;
         if (format != MrzFormat.get(mrz)) {
             throw new MrzParseException("invalid format: " + MrzFormat.get(mrz), mrz, new MrzRange(0, 0, 0), format);
         }
@@ -147,7 +157,9 @@ public abstract class MrzRecord implements Serializable {
     }
     
     /**
-     * Serializes this record to a valid MRZ record.
+     * Serializes this record back into a valid MRZ record. NOTE: this is a lossy reconstruction —
+     * line 1 is rebuilt with a fixed 9-char document-number field, so overflow document numbers
+     * (e.g. the 11-digit Dominican cédula) are truncated. For the exact scanned value use {@link #rawMrz}.
      * @return a valid MRZ record, not null, separated by \n
      */
     public abstract String toMrz();

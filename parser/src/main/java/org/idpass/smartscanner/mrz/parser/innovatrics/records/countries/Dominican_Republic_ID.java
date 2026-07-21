@@ -55,6 +55,19 @@ public class Dominican_Republic_ID extends MrzRecord {
         final MrzParser p = new MrzParser(mrz);
         documentNumber = p.parseNumberString(new MrzRange(5, 17, 0));
         validDocumentNumber = p.checkDigitWithoutFiller(17, 0, new MrzRange(5, 17, 0), "document number");
+        // New DOM layout: cols 5-13 carry an alphanumeric card number (e.g. "CV0067804") and the
+        // 11-digit cedula sits at the end of line 1, not in the 5-16 field. When the standard field
+        // isn't an 11-digit number, fall back to the last 11 digits of line 1 (trailing fillers
+        // stripped) -- mirrors the deployed config heuristic and leaves the old layout untouched.
+        if (!documentNumber.matches("\\d{11}")) {
+            final String line0 = p.rows[0].replaceAll("<+$", "");
+            if (line0.length() >= 11) {
+                final String tail = MrzParser.correctOcrDigits(line0.substring(line0.length() - 11));
+                if (tail.matches("\\d{11}")) {
+                    documentNumber = tail;
+                }
+            }
+        }
         optional = p.parseString(new MrzRange(18, 30, 0));
         dateOfBirth = p.parseDate(new MrzRange(0, 6, 1));
         validDateOfBirth = p.checkDigit(6, 1, new MrzRange(0, 6, 1), "date of birth") && dateOfBirth.isDateValid();

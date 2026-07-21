@@ -387,6 +387,20 @@ public class MrzParser {
     }
 
     /**
+     * Corrects the common OCR letter/digit confusions to digits (O-&gt;0, I-&gt;1, B-&gt;8, S-&gt;5, Z-&gt;2).
+     * Mirrors the substitutions {@link #parseNumberString} applies, for callers that read a numeric
+     * value straight from a raw range (e.g. the Dominican cédula tail / Guatemala extension digits).
+     * @param str the string; null is treated as empty.
+     * @return the string with letter/digit confusions normalized to digits.
+     */
+    public static String correctOcrDigits(String str) {
+        if (str == null) {
+            return "";
+        }
+        return str.replace('O', '0').replace('I', '1').replace('B', '8').replace('S', '5').replace('Z', '2');
+    }
+
+    /**
      * Factory method, which parses the MRZ and returns appropriate record class.
      * @param mrz MRZ to parse.
      * @return record class.
